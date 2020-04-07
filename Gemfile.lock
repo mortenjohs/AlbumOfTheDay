@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rexml (3.2.4)
+    rss (0.2.9)
+      rexml
+
+PLATFORMS
+  x86-mingw32
+
+DEPENDENCIES
+  rss
+
+BUNDLED WITH
+   1.16.0

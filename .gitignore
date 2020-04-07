@@ -1,0 +1,5 @@
+cache/
+public/
+config.yml
+generate_files.sh
+album_of_the_day.csv
