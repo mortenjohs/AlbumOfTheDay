@@ -1,0 +1,67 @@
+<html>
+<head>
+	<title><%= "Album of the Day, #{album['date']}: #{album['artist']} - #{album['album']} " %></title>
+	<style type="text/css">
+		body {
+			font-family: sans-serif;
+			text-align:center;
+		}
+		a {
+			text-decoration: none;
+		}
+		.image {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			width: 50%;
+		}
+		.providers {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			width: 25%;
+		}
+		.navigation {
+			padding-bottom: 20;
+		}
+		hr { 
+		  display: block;
+		  margin-top: 0.5em;
+		  margin-bottom: 0.5em;
+		  margin-left: 33%;
+		  margin-right: 33%;
+		  border-style: inset;
+		  border-width: 1px;
+		} 
+	</style>
+</head>
+<body>
+	<div>
+		<h1>Album of the Day</h1>
+		<h2><%= "#{['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][album['date_obj'].wday]}, #{album['date']}" %></h2>
+		<div class = "navigation"> 
+			<% prev_day = album["date_obj"] - 1 unless album["date_obj"] == first_date %>
+			<% next_day = album["date_obj"] + 1 unless album["date_obj"] == Date.today %>
+			<%= prev_day.nil? ? "" : "<a href = '../../#{prev_day.year}/#{prev_day.month}/#{prev_day.day}.html' > <-- </a> " %>
+			<a href = '../../index.html' >Today</a> 
+			<%= next_day.nil? ? "" : "<a href = '../../#{next_day.year}/#{next_day.month}/#{next_day.day}.html' > --> </a> " %>
+		</div>
+		<div class = 'image'>
+			<%= "<img src='#{album['thumbnail']}' alt='#{album['artist']} - #{album['album']}'>" %> 
+		</div>
+		<div> 
+			<h2><%= "#{album["artist"]} - #{album["album"]}" %> </h2>
+		</div>
+		<div>
+			<%= "#{album['comment']}" %>
+		</div>
+		<hr>
+		<div class='providers'>
+			<% p_text = [] %>
+			<% album["providers"].each { |provider, url| p_text << "<a href='#{url}'>#{provider}</a>" } %>
+			<%= p_text.join(" | ")%>
+		</div>
+		<hr>
+		<small>CC BY-NC-SA 2020 mortenjohs</small>
+	</div>
+</body>
