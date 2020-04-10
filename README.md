@@ -13,7 +13,7 @@
     - csv_file: Input CSV file
     - songlink_api: URL for the API
     - url_parameters: List of default parameters that is used for the API lookup (ie userCountry, key, etc.)
-    - rss
+    - rss (optional (no RSS feeds are generted if these are missing...))
         - author: author of RSS feed.
         - base_url: URL for the resulting rss feed. Provider and .xml will be added.
 
