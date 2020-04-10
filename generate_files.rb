@@ -57,11 +57,11 @@ end
 
 rss_generators = {}
 
-def rss_generator(provider, data)
+def rss_generator(provider, data, author, base_url)
   rss = RSS::Maker.make("atom") do |maker|
-    maker.channel.author = "mortenjohs"
+    maker.channel.author = author
     maker.channel.updated = Time.now.to_s
-    maker.channel.about = "https://ervik.hopto.org/aotd/rss/#{provider}.xml"
+    maker.channel.about = "#{base_url}/#{provider}.xml"
     maker.channel.title = "Album of the day on #{provider}"
     data.each do |date, album| 
       if Date.today >= album["date_obj"]
@@ -86,7 +86,7 @@ first_date = Date.strptime(all_albums.keys.sort.first)
 
 providers.each do |p| 
   File.open("#{config["rss_dir"]}/#{p}.xml", "w") do |f|
-    f << rss_generator(p, all_albums)
+    f << rss_generator(p, all_albums, config["rss"]["author"], config['rss']['base_url'] )
   end
 end
 
