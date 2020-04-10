@@ -46,12 +46,11 @@ CSV.read(config["csv_file"], :headers => true).each do |row|
   album["date_obj"]  = Date.strptime(album["date"])
   ## find links
   album["providers"] = {}
-  unless album["bandcamp"].nil?
-    album["providers"]["bandcamp"]=album["bandcamp"]
-  end
+  album["providers"]["bandcamp"] = album["bandcamp"] unless album["bandcamp"].nil?
   data["linksByPlatform"].each do |k,v| 
       album["providers"][k]=v["url"]
   end
+
   all_albums[album["date"]] = album
 end
 
@@ -84,23 +83,24 @@ all_albums.each {|date, album| providers<<album["providers"].keys;providers = pr
 
 first_date = Date.strptime(all_albums.keys.sort.first)
 
-providers.each do |p| 
-  File.open("#{config["rss_dir"]}/#{p}.xml", "w") do |f|
-    f << rss_generator(p, all_albums, config["rss"]["author"], config['rss']['base_url'] )
+# if we have necessary info, generate RSS feeds
+unless config["rss"]["author"].nil? || config['rss']['base_url'].nil?
+  providers.each do |p| 
+    File.open("#{config["rss_dir"]}/#{p}.xml", "w") do |f|
+      f << rss_generator(p, all_albums, config["rss"]["author"], config['rss']['base_url'] )
+    end
   end
+  puts "Providers RSS generated: #{providers.sort.join(', ')}"
 end
 
-puts "Providers generated: #{providers.sort.join(', ')}"
-
+# build html
 album_template = Tilt.new('views/album.erb')
 all_albums.each do |date, album| 
   date_obj = album["date_obj"]
   if Date.today >= date_obj
     filename = "#{config['html_dir']}/#{date_obj.year}/#{date_obj.month}/#{date_obj.day}.html"
     dirname = File.dirname(filename)
-    unless File.directory?(dirname)
-      FileUtils.mkdir_p(dirname)
-    end
+    FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
     File.open(filename, "w") do |file|
       file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers )
     end
