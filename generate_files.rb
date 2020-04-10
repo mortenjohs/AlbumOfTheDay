@@ -1,5 +1,3 @@
-# generate_jsons
-
 require "csv"
 require "json"
 require 'uri'
@@ -10,29 +8,24 @@ require "yaml"
 require "tilt"
 require "fileutils"
 
-puts Time.now
+puts Time.now # for the log file...
 
-cache    = "./cache"
-rss_dir  = "./public/rss"
-csv_file = "./album_of_the_day.csv"
-config   = "./config.yml"
+config_file   = "./config.yml"
 
-# https://api.song.link/v1-alpha.1/links?url=spotify%3Aalbum%3A5OZHQ7KG8k04IOkF50fACO&userCountry=FR
-songlink_api = "https://api.song.link/v1-alpha.1/links"
+config = YAML.load(File.open(config_file).read)
 
-config = {
-  "userCountry" => "FR"
-}
+# make sure folders exist:
+[config['cache'], config['rss_dir'], config['html_dir']].each { |dirname| FileUtils.mkdir_p(dirname) unless File.directory?(dirname) }
 
-base_url = songlink_api + "?"
+base_url = config["songlink_api"] + "?"
 
-config.each { |k,v| base_url+="#{URI::encode(k)}=#{URI::encode(v)}&" } 
+config["url_parameters"].each { |k,v| base_url+="#{URI::encode(k)}=#{URI::encode(v)}&" } # leave trailing &!
 
 all_albums = {}
 
-CSV.read(csv_file, :headers => true).each do |row|
+CSV.read(config["csv_file"], :headers => true).each do |row|
   album = row.to_h
-  file_name = "#{cache}/#{album['date']}.json"
+  file_name = "#{config['cache']}/#{album['date']}.json"
   data = {}
   if File.exist?(file_name)
     data = JSON.parse(File.open(file_name).read)
@@ -42,7 +35,6 @@ CSV.read(csv_file, :headers => true).each do |row|
   if data.empty?
     puts "Downloading: #{album['artist']} - #{album['album']}"
     url = base_url + "url=#{album['spotify-app']}"
-    # puts url
     open(url) do |f|
       data = JSON.parse(f.read)
       File.open(file_name, "w") {|file| file << JSON.pretty_generate(data) }      
@@ -93,7 +85,7 @@ all_albums.each {|date, album| providers<<album["providers"].keys;providers = pr
 first_date = Date.strptime(all_albums.keys.sort.first)
 
 providers.each do |p| 
-  File.open("#{rss_dir}/#{p}.xml", "w") do |f|
+  File.open("#{config["rss_dir"]}/#{p}.xml", "w") do |f|
     f << rss_generator(p, all_albums)
   end
 end
