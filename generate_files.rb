@@ -104,17 +104,17 @@ album_template = Tilt.new('views/album.erb')
 all_albums.each do |date, album| 
   date_obj = album["date_obj"]
   if Date.today >= date_obj
-    filename = "public/#{date_obj.year}/#{date_obj.month}/#{date_obj.day}.html"
+    filename = "#{config['html_dir']}/#{date_obj.year}/#{date_obj.month}/#{date_obj.day}.html"
     dirname = File.dirname(filename)
     unless File.directory?(dirname)
       FileUtils.mkdir_p(dirname)
     end
     File.open(filename, "w") do |file|
-      file << album_template.render(self, :album => album, :first_date => first_date)
+      file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers )
     end
   end
 end
 
-File.open("./public/index.html", "w") do |file|
+File.open("#{config['html_dir']}/index.html", "w") do |file|
   file << Tilt.new('views/index.erb').render(self, :today => Date.today)
 end
