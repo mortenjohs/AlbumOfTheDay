@@ -5,6 +5,3 @@ csv_file: "./album_of_the_day.csv"
 songlink_api: "https://api.song.link/v1-alpha.1/links"
 url_parameters: 
   userCountry: "FR"
-rss:
-  author: "mortenjohs"
-  base_url: "https://ervik.hopto.org/aotd/rss/"
