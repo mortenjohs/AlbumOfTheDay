@@ -148,7 +148,7 @@ all_albums.each {|date, album| providers<<album["providers"].keys;providers = pr
 first_date = Date.strptime(all_albums.keys.sort.first)
 
 # if we have necessary info, generate RSS feeds
-unless config["rss"]["author"].nil? || config['rss']['base_url'].nil?
+unless config["rss"].nil? || config["rss"]["author"].nil? || config['rss']['base_url'].nil?
   providers.each do |p| 
     File.open("#{config["rss_dir"]}/#{p}.xml", "w") do |f|
       f << rss_generator(p, all_albums, config["rss"]["author"], config['rss']['base_url'] )
