@@ -43,11 +43,15 @@
 	</style>
 </head>
 <body>
-	<h1>Album of the Day</h1>
+	<% if album['random'] %>
+		<h1>Random Album of the Day</h1>
+	<% else %>
+		<h1>Album of the Day</h1>
+	<% end %>
 	<h2><%= "#{['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][album['date_obj'].wday]}, #{album['date']}" %></h2>
 	<div class = "navigation"> 
-		<% prev_day = album["date_obj"] - 1 unless album["date_obj"] == first_date %>
-		<% next_day = album["date_obj"] + 1 unless album["date_obj"] == Date.today %>
+		<% prev_day = album["date_obj"] - 1 unless album["date_obj"] == first_date || album['random'] %>
+		<% next_day = album["date_obj"] + 1 unless album["date_obj"] == Date.today || album['random'] %>
 		<%= prev_day.nil? ? "<span class = 'disabled'>&larr;</span>" : "<a href = '../../#{prev_day.year}/#{prev_day.month}/#{prev_day.day}.html' > &larr; </a> " %>
 		<%= album["date_obj"] == Date.today ? "<span class = 'disabled'>Today</span>" : "<a href = '../../index.html' >Today</a>" %>
 		<%= next_day.nil? ? "<span class = 'disabled'>&rarr;</span>" : "<a href = '../../#{next_day.year}/#{next_day.month}/#{next_day.day}.html' > &rarr; </a> " %>
