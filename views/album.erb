@@ -43,6 +43,7 @@
 	</style>
 </head>
 <body>
+	<% rel_path = album['random'] ? './' : '../../' %>
 	<% if album['random'] %>
 		<h1>Random Album of the Day</h1>
 	<% else %>
@@ -52,9 +53,9 @@
 	<div class = "navigation"> 
 		<% prev_day = album["date_obj"] - 1 unless album["date_obj"] == first_date || album['random'] %>
 		<% next_day = album["date_obj"] + 1 unless album["date_obj"] == Date.today || album['random'] %>
-		<%= prev_day.nil? ? "<span class = 'disabled'>&larr;</span>" : "<a href = '../../#{prev_day.year}/#{prev_day.month}/#{prev_day.day}.html' > &larr; </a> " %>
+		<%= prev_day.nil? ? "<span class = 'disabled'>&larr;</span>" : "<a href = '#{rel_path}#{prev_day.year}/#{prev_day.month}/#{prev_day.day}.html' > &larr; </a> " %>
 	<% if album['random'] %>
-		<a href = './index.html' >Today</a>
+		<a href = "./index.html" >Today</a>
 	<% else %>
 		<%= album["date_obj"] == Date.today ? "<span class = 'disabled'>Today</span>" : "<a href = '../../index.html' >Today</a>" %>
 	<% end %>
@@ -80,7 +81,7 @@
 	<small>CC BY-NC-SA 2020 mortenjohs -- <a href='https://github.com/mortenjohs/AlbumOfTheDay'>source</a></small><br>
 	<small>
 		<% p_text = [] %>
-		<% providers.each { |provider| p_text << "<a href='../../rss/#{provider}.xml'>#{provider}</a>" } %>
+		<% providers.each { |provider| p_text << "<a href='#{rel_path}rss/#{provider}.xml'>#{provider}</a>" } %>
 		<%= "RSS(ATOM): #{p_text.join(' | ')}"%>
 	</small>
 </body>
