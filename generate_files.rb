@@ -16,7 +16,7 @@ config_override_file = "./config_override.yml"
 config = YAML.load(File.open(config_file).read)
 config = config.merge(YAML.load(File.open(config_override_file).read)) if File.exist?(config_override_file)
 
-puts config
+# puts config
 
 # make sure folders exist:
 [config['cache'], config['rss_dir'], config['html_dir']].each { |dirname| FileUtils.mkdir_p(dirname) unless File.directory?(dirname) }
@@ -154,7 +154,7 @@ unless config["rss"].nil? || config["rss"]["author"].nil? || config['rss']['base
       f << rss_generator(p, all_albums, config["rss"]["author"], config['rss']['base_url'] )
     end
   end
-  puts "Providers RSS generated: #{providers.sort.join(', ')}"
+  puts "Providers' RSS feeds generated: #{providers.sort.join(', ')}"
 end
 
 # build html
