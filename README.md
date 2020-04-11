@@ -54,5 +54,10 @@ date,album,artist,spotify-app,comment,bandcamp
 
 ### Random album if there are none for a day
 
-- Pull a random album from list
-- Use a service to generate similar albums? (Spitify API?)
+1. Pull a random album from list
+2. Use a service to generate similar albums? (Spitify API?)
+
+## TODO
+
+- Make cache id based istead of date based.
+- Make code more robust -- if API URLs doesn't work.
