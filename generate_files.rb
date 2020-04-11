@@ -176,24 +176,24 @@ File.open("#{config['html_dir']}/index.html", "w") do |file|
 end
 
 unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
-  File.open("#{config['html_dir']}/random.html", "w") do |file|
-    artist = all_albums.values.map { |e| e['artist']}.sample
-    data = {}
-    tries = 0
-    threshold = 5
-    while tries < threshold && data.empty?
-      data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key']) 
-      tries += 1
-    end
-    unless data.empty?
-      album = {}
-      album['date_obj'] = Date.today-1
-      album['artist']   = data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]
-      album['album']    = data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]
-      album['date']     = Date.today.to_s
-      album['random']   = true
-      album['comment']  = "Random suggestion similar to: #{artist}."
-      attach_songlink_data!(album, data)
+  artist = all_albums.values.map { |e| e['artist']}.sample
+  data = {}
+  tries = 0
+  threshold = 5
+  while tries < threshold && data.empty?
+    data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key']) 
+    tries += 1
+  end
+  unless data.empty?
+    album = {}
+    album['date_obj'] = Date.today-7
+    album['artist']   = data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]
+    album['album']    = data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]
+    album['date']     = Date.today.to_s
+    album['random']   = true
+    album['comment']  = "Random suggestion similar to: #{artist}."
+    attach_songlink_data!(album, data)
+    File.open("#{config['html_dir']}/random.html", "w") do |file|
       file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers )
       puts "Random album: #{data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]} - #{data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]} (Based on #{artist}.)"
     end
