@@ -180,7 +180,11 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
   tries = 0
   threshold = 5
   while tries < threshold && data.empty?
-    data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key']) 
+    begin
+      data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key']) 
+    rescue OpenURI::HTTPError => e
+      puts e
+    end
     tries += 1
   end
   unless data.empty?
