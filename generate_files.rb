@@ -58,7 +58,6 @@ def get_songlink_info(album, base_url, cache='./cache/')
   data
 end
 
-
 CSV.read(config["csv_file"], :headers => true).each do |row|
   album = row.to_h
   ## date
@@ -120,7 +119,7 @@ def get_songlink_album(artist, album)
 end
 
 def get_similar_artists_by_name_lastfm(artist,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
-  url = "#{base_url}?method=artist.getsimilar&artist=#{artist}&api_key=#{api_key}&format=json&limit=#{limit}"  
+  url = "#{base_url}?method=artist.getsimilar&artist=#{artist}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
   open(url) do |f|
     data = JSON.parse(f.read)
@@ -129,7 +128,7 @@ def get_similar_artists_by_name_lastfm(artist,api_key,limit=10,base_url="http://
 end
 
 def get_albums_from_artist_by_mbid_lastfm(mbid,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
-  url = "#{base_url}?method=artist.getTopAlbums&mbid=#{mbid}&api_key=#{api_key}&format=json&limit=#{limit}"  
+  url = "#{base_url}?method=artist.getTopAlbums&mbid=#{mbid}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
   open(url) { |f| data = JSON.parse(f.read) }
   data['topalbums']['album']
@@ -186,7 +185,7 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
   end
   unless data.empty?
     album = {}
-    album['date_obj'] = Date.today-7
+    album['date_obj'] = Date.today
     album['artist']   = data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]
     album['album']    = data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]
     album['date']     = Date.today.to_s
