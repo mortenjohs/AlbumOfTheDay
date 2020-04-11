@@ -175,7 +175,7 @@ File.open("#{config['html_dir']}/index.html", "w") do |file|
   file << Tilt.new('views/index.erb').render(self, :today => Date.today)
 end
 
-unless config['lastfm']['api_key'].nil?
+unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
   File.open("#{config['html_dir']}/random.html", "w") do |file|
     artist = all_albums.values.map { |e| e['artist']}.sample
     data = {}
