@@ -30,7 +30,12 @@ url_parameters:
 rss:
   author: "someone"
   base_url: "https://somewhere.org/aotd/rss/"
+lastfm:
+  api_key: "API_KEY"
+  base_url: "http://ws.audioscrobbler.com/2.0/"
 ```
+
+You can also add elements to a file called 'config_override.yml' that will be merged into this config at runtime.
 
 ### CSV file
 
@@ -61,3 +66,4 @@ date,album,artist,spotify-app,comment,bandcamp
 
 - Make cache id based istead of date based.
 - Make code more robust -- if API URLs doesn't work.
+- Link from main pages to random.html.
