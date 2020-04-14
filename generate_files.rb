@@ -10,7 +10,6 @@ require "fileutils"
 
 puts Time.now # for the log file...
 
-FUTURE = config['generate_future'] || false
 
 config_file   = "./config.yml"
 config_override_file = "./config_override.yml"
@@ -18,6 +17,7 @@ config_override_file = "./config_override.yml"
 config = YAML.load(File.open(config_file).read)
 config = config.merge(YAML.load(File.open(config_override_file).read)) if File.exist?(config_override_file)
 
+FUTURE = config['generate_future'] || false
 # puts config
 
 # make sure folders exist:
@@ -158,7 +158,7 @@ def get_random_album_from_similar_artist(artist, api_key)
 end
 
 providers  = []
-all_albums.each {|date, album| providers<<album["providers"].keys;providers = providers.flatten.uniq }
+all_albums.each {|date, album| providers<<album["providers"].keys;providers = providers.flatten.uniq.sort }
 
 first_date = Date.strptime(all_albums.keys.sort.first)
 
