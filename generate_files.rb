@@ -10,6 +10,8 @@ require "fileutils"
 
 puts Time.now # for the log file...
 
+FUTURE = config['generate_future'] || false
+
 config_file   = "./config.yml"
 config_override_file = "./config_override.yml"
 
@@ -26,14 +28,26 @@ config["url_parameters"].each { |k,v| base_url+="#{URI::encode(k)}=#{URI::encode
 
 all_albums = {}
 
-def attach_songlink_data!(album, data)
-  ## thumbnail
-  album["thumbnail"] = data["entitiesByUniqueId"][data["entityUniqueId"]]["thumbnailUrl"]
-  ## find links
+def get_bandcamp_album_cover(url) 
+  f = open(url).read
+  f=~/\"og:image\" content=\"(.*)">/
+  $1
+end
+
+def attach_providers_data!(album, data)
   album["providers"] = {}
-  album["providers"]["bandcamp"] = album["bandcamp"] unless album["bandcamp"].nil?
-  data["linksByPlatform"].each do |k,v| 
+  unless data.nil? || data["entitiesByUniqueId"].nil?
+    ## thumbnail
+    album["thumbnail"] = data["entitiesByUniqueId"][data["entityUniqueId"]]["thumbnailUrl"]     
+    ## find links
+    data["linksByPlatform"].each do |k,v| 
       album["providers"][k]=v["url"]
+    end
+  end
+  # special case for bandcamp
+  unless album["bandcamp"].nil?
+    album["thumbnail"] = get_bandcamp_album_cover(album["bandcamp"]) if album["thumbnail"].nil?
+    album["providers"]["bandcamp"] = album["bandcamp"] 
   end
 end
 
@@ -62,10 +76,12 @@ CSV.read(config["csv_file"], :headers => true).each do |row|
   album = row.to_h
   ## date
   album["date_obj"]  = Date.strptime(album["date"])
+  date = {}
+  unless album['spotify-app'].nil?
+    data = get_songlink_info(album, base_url, config['cache'])
+  end
 
-  data = get_songlink_info(album, base_url, config['cache'])
-  attach_songlink_data!(album, data)
-
+  attach_providers_data!(album, data)
   all_albums[album["date"]] = album
 end
 
@@ -160,7 +176,7 @@ end
 album_template = Tilt.new('views/album.erb')
 all_albums.each do |date, album| 
   date_obj = album["date_obj"]
-  if Date.today >= date_obj
+  if Date.today >= date_obj || FUTURE
     filename = "#{config['html_dir']}/#{date_obj.year}/#{date_obj.month}/#{date_obj.day}.html"
     dirname = File.dirname(filename)
     FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
@@ -195,7 +211,7 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
     album['date']     = Date.today.to_s
     album['random']   = true
     album['comment']  = "Random suggestion similar to: #{artist}."
-    attach_songlink_data!(album, data)
+    attach_providers_data!(album, data)
     File.open("#{config['html_dir']}/random.html", "w") do |file|
       file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers )
       puts "Random album: #{data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]} - #{data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]} (Based on #{artist}.)"
