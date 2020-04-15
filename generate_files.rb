@@ -34,8 +34,12 @@ def get_bandcamp_album_cover(url)
   $1
 end
 
-def attach_providers_data!(album, data)
+def attach_providers_data(album, data)
   album["providers"] = {}
+
+  # special case for bandcamp
+  album["providers"]["bandcamp"] = album["bandcamp"] unless album["bandcamp"].nil?
+
   unless data.nil? || data["entitiesByUniqueId"].nil?
     ## thumbnail
     album["thumbnail"] = data["entitiesByUniqueId"][data["entityUniqueId"]]["thumbnailUrl"]     
@@ -44,11 +48,11 @@ def attach_providers_data!(album, data)
       album["providers"][k]=v["url"]
     end
   end
-  # special case for bandcamp
-  unless album["bandcamp"].nil?
-    album["thumbnail"] = get_bandcamp_album_cover(album["bandcamp"]) if album["thumbnail"].nil?
-    album["providers"]["bandcamp"] = album["bandcamp"] 
-  end
+
+  # If we can't get the default thumbnail, use bandcamp, if possible.
+  album["thumbnail"] = get_bandcamp_album_cover(album["bandcamp"]) if !album["bandcamp"].nil? && album["thumbnail"].nil?
+  
+  return album
 end
 
 def get_songlink_info(album, base_url, cache='./cache/')
@@ -80,9 +84,7 @@ CSV.read(config["csv_file"], :headers => true).each do |row|
   unless album['spotify-app'].nil?
     data = get_songlink_info(album, base_url, config['cache'])
   end
-
-  attach_providers_data!(album, data)
-  all_albums[album["date"]] = album
+  all_albums[album["date"]] = attach_providers_data(album, data)
 end
 
 rss_generators = {}
@@ -158,11 +160,11 @@ def get_random_album_from_similar_artist(artist, api_key)
 end
 
 providers  = []
-all_albums.each {|date, album| providers<<album["providers"].keys;providers = providers.flatten.uniq.sort }
+all_albums.each {|date, album| providers<<album["providers"].keys;providers = providers.flatten.uniq }
 
 first_date = Date.strptime(all_albums.keys.sort.first)
 
-# if we have necessary info, generate RSS feeds
+# If we have necessary info, generate RSS feeds...
 unless config["rss"].nil? || config["rss"]["author"].nil? || config['rss']['base_url'].nil?
   providers.each do |p| 
     File.open("#{config["rss_dir"]}/#{p}.xml", "w") do |f|
@@ -172,7 +174,7 @@ unless config["rss"].nil? || config["rss"]["author"].nil? || config['rss']['base
   puts "Providers' RSS feeds generated: #{providers.sort.join(', ')}"
 end
 
-# build html
+# Generate static htmls
 album_template = Tilt.new('views/album.erb')
 all_albums.each do |date, album| 
   date_obj = album["date_obj"]
@@ -186,10 +188,12 @@ all_albums.each do |date, album|
   end
 end
 
+## Generate index redirect.
 File.open("#{config['html_dir']}/index.html", "w") do |file|
   file << Tilt.new('views/index.erb').render(self, :today => Date.today)
 end
 
+## Generate random page
 unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
   artist = all_albums.values.map { |e| e['artist']}.sample
   data = {}
@@ -211,7 +215,7 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
     album['date']     = Date.today.to_s
     album['random']   = true
     album['comment']  = "Random suggestion similar to: #{artist}."
-    attach_providers_data!(album, data)
+    album = attach_providers_data(album, data)
     File.open("#{config['html_dir']}/random.html", "w") do |file|
       file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers )
       puts "Random album: #{data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]} - #{data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]} (Based on #{artist}.)"
