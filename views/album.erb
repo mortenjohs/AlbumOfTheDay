@@ -63,7 +63,7 @@
 	</div>
 	<div class = 'image'>
 		<% url = album['providers']['spotify'].nil? ? album['providers'].values.first : album['providers']['spotify'] %>
-		<%= "<a href='#{url}'><img src='#{album['thumbnail']}' alt='#{album['artist'] } - #{album['album']}' width='640' height='640' ></a>" %> 
+		<%= "<a href='#{url}'><img src='#{album['thumbnail']}' alt='#{album['artist'] } - #{album['album']}' width='66%' ></a>" %> 
 	</div>
 	<div> 
 		<h2><%= "#{album["artist"]} - #{album["album"]}" %> </h2>
@@ -75,7 +75,7 @@
 	<div class='providers'>
 		Available on: 
 		<% p_text = [] %>
-		<% album["providers"].keys.sort.each { |provider| p_text << "<a href='#{album["providers"][provider]}'>#{provider}</a>" } %>
+		<% album["providers"].keys.each { |provider| p_text << "<a href='#{album["providers"][provider]}'>#{provider}</a>" } %>
 		<%= p_text.join(" | ")%>
 	</div>
 	<hr>
