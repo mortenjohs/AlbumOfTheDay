@@ -204,6 +204,9 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
       data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key']) 
     rescue OpenURI::HTTPError => e
       puts e
+    rescue NoMethodError => e
+      ## This captures null pointer errors in the random album generator chain...
+      puts e
     end
     tries += 1
   end
