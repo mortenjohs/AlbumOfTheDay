@@ -1,0 +1,74 @@
+<html>
+	<head>
+		<title>Stats</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <link rel="alternate" type="application/rss+xml" href="https://ervik.hopto.org/aotd/rss/spotify.xml" title="Album of the Day on Spotify">
+		<style type="text/css">
+			body {
+				font-family: sans-serif;
+				text-align: center;
+			}
+			a {
+				text-decoration: none;
+			}
+			h1 {
+				margin-bottom: -15px;
+			}
+			h2 {
+				margin-bottom: 5px;
+			}
+			.image {
+				display: block;
+				margin: auto;
+				width: 50%;
+			}
+			.providers {
+				margin: auto;
+				padding: 10px;
+				width: 25%;
+			}
+			hr { 
+			  display: block;
+			  margin-top: 0.5em;
+			  margin-bottom: 0.5em;
+			  margin-left: 33%;
+			  margin-right: 33%;
+			  border-style: inset;
+			  border-width: 1px;
+			} 
+			.disabled {
+				color: lightgray;
+			}
+			.miniscule {
+				font-size: 0.3em;
+			}
+
+		</style>
+	</head>
+	<body>
+		<h1>Stats</h1>
+		<br>
+		<center>
+			<table>
+				<tr>
+					<th>Decade</th>
+					<th>Count</th>
+					<th>Percent</th>
+				</tr>
+				<% total = stats[:years].map{ |a| a[1] }.inject(&:+) %>
+				<% stats[:years].each do |d,c| %>
+				<tr>
+					<td><%= d %>0s</td>
+					<td><%= c %></td>
+					<td><%= ((c.to_f/total.to_f)*100).to_i %>%</td>
+				</tr>
+				<% end %>
+				<tr>
+					<td>Total:</td>
+					<td><%= total %></td>
+					<td>100%</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>
