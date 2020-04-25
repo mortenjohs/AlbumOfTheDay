@@ -56,19 +56,29 @@
 					<th>Percent</th>
 				</tr>
 				<% total = stats[:years].map{ |a| a[1] }.inject(&:+) %>
+				<% days_in_decade = (Date.parse("2030-01-01") - Date.parse("2020-01-01")).to_i %>
+				<% current_day_in_decade = (Date.today - Date.parse("2020-01-01")).to_i %>
+				<% proportion = current_day_in_decade.to_f/days_in_decade.to_f %>
 				<% stats[:years].each do |d,c| %>
+					<% if d<"202" %>
 				<tr>
 					<td><%= d %>0s</td>
 					<td><%= c %></td>
-					<td><%= ((c.to_f/total.to_f)*100).to_i %>%</td>
+					<td style="text-align:right"><%= ((c.to_f/total.to_f)*100).round %>%</td>
 				</tr>
+					<% else %>
+					<td><%= d %>0s*</td>
+					<td><%= "#{c} (Adjusted: #{(c/proportion).round})" %></td>
+					<td style="text-align:right"><%= ((c.to_f/total.to_f)*100).round %>%</td>
+					<% end %>
 				<% end %>
 				<tr>
 					<td>Total:</td>
 					<td><%= total %></td>
-					<td>100%</td>
+					<td style="text-align:right">100%</td>
 				</tr>
 			</table>
+			<small><%= "*Only #{(proportion*100).round(2)}% of the decade has passed." %></small>
 		</center>
 	</body>
 </html>
