@@ -79,7 +79,7 @@ end
 CSV.read(config["csv_file"], :headers => true).each do |row|
   album = row.to_h
   ## date
-  album["date_obj"]  = Date.strptime(album["date"])
+  album["date_obj"] = Date.strptime(album["date"])
   date = {}
   unless album['spotify-app'].nil?
     data = get_songlink_info(album, base_url, config['cache'])
@@ -195,7 +195,7 @@ end
 
 ## Generate random page
 unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
-  artist = all_albums.values.map { |e| e['artist']}.sample
+  artist = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map { |e| e['artist']}.sample
   data = {}
   tries = 0
   threshold = 5
