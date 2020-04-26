@@ -193,6 +193,26 @@ File.open("#{config['html_dir']}/index.html", "w") do |file|
   file << Tilt.new('views/index.erb').render(self, :today => Date.today)
 end
 
+## Generate stats
+# https://gist.github.com/mortenjohs/4228838
+
+module Enumerable
+  def count_by (&block)
+    Hash[ self.group_by { |e| yield e }.map { |key, list| [key, list.length] } ]
+  end
+end
+
+stats = {}
+stats[:years] = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map {|a| a["year"]}.count_by { |a| a.to_s[0,3] }.sort
+puts stats 
+
+# Generate stats.html
+File.open("#{config['html_dir']}/stats.html", "w") do |file|
+  file << Tilt.new('views/stats.erb').render(self, :stats => stats)
+end
+
+exit
+
 ## Generate random page
 unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
   artist = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map { |e| e['artist']}.sample
@@ -226,20 +246,3 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
   end
 end
 
-## Generate stats
-# https://gist.github.com/mortenjohs/4228838
-
-module Enumerable
-  def count_by (&block)
-    Hash[ self.group_by { |e| yield e }.map { |key, list| [key, list.length] } ]
-  end
-end
-
-stats = {}
-stats[:years] = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map {|a| a["year"]}.count_by { |a| a.to_s[0,3] }.sort
-puts stats 
-
-# Generate stats.html
-File.open("#{config['html_dir']}/stats.html", "w") do |file|
-  file << Tilt.new('views/stats.erb').render(self, :stats => stats)
-end

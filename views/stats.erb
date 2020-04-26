@@ -40,13 +40,20 @@
 				color: lightgray;
 			}
 			.miniscule {
-				font-size: 0.3em;
+				font-size: 0.42em;
 			}
 
 		</style>
 	</head>
 	<body>
 		<h1>Stats</h1>
+		<% rel_path = './' %>
+		<h2><%= "#{['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][Date.today.wday]}, #{Date.today.to_s}" %></h2>
+		<div class = "navigation"> 
+			<a href = './index.html' >Today</a>
+			<br>
+			<span class='miniscule'><a href=<%= "'#{rel_path}random.html'" %>>Random</a> | <a href=<%= "'#{rel_path}stats.html'" %>>Stats</a></span>
+		</div>
 		<br>
 		<center>
 			<table>
