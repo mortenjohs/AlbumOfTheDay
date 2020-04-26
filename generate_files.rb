@@ -211,8 +211,6 @@ File.open("#{config['html_dir']}/stats.html", "w") do |file|
   file << Tilt.new('views/stats.erb').render(self, :stats => stats)
 end
 
-exit
-
 ## Generate random page
 unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
   artist = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map { |e| e['artist']}.sample
