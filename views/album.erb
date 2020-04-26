@@ -22,6 +22,10 @@
 			margin: auto;
 			width: 50%;
 		}
+		.comment {
+			width: 33%;
+			display: inline-block;
+		}
 		.providers {
 			margin: auto;
 			padding: 10px;
@@ -72,7 +76,7 @@
 	<div> 
 		<h2><%= "#{album["artist"]} - #{album["album"]}" %> </h2>
 	</div>
-	<div>
+	<div class = 'comment'>
 		<%= "#{album['comment']}" %>
 	</div>
 	<hr>
