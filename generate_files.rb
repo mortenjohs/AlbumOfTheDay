@@ -10,7 +10,6 @@ require "fileutils"
 
 puts Time.now # for the log file...
 
-
 config_file   = "./config.yml"
 config_override_file = "./config_override.yml"
 
@@ -29,6 +28,7 @@ config["url_parameters"].each { |k,v| base_url+="#{URI::encode(k)}=#{URI::encode
 all_albums = {}
 
 def get_bandcamp_album_cover(url) 
+  # TODO add cache?
   f = open(url).read
   f=~/\"og:image\" content=\"(.*)">/
   $1
