@@ -64,6 +64,5 @@ date,album,artist,spotify-app,comment,bandcamp
 
 ## TODO
 
-- Make cache id based istead of date based.
-- Make code more robust -- if API URLs doesn't work.
-- Link from main pages to random.html.
+- Make cache id based istead of date based...
+- Make stats page show actual album names from the various decades on hover...
