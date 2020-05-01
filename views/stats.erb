@@ -52,22 +52,22 @@
 			</table>
 		</div>
 		<small><%= "*Only #{(proportion*100).round(2)}% of the decade has passed." %></small>
+		<script type="text/javascript">
+			new roughViz.BarH({
+			    element: '#viz0', // container selection
+			    data: {
+				    labels: [<%= "'" + stats[:years].map {|e| e[0]+"0s"}.join("','") + "'" %>],
+			    	values: [<%= stats[:years].map {|e| e[1]}.join(',') %>]
+				},			
+				roughness: 5,
+				axisRoughness: 3,
+				fillStyle: 'cross-hatch',
+				xLabel: 'Count',
+				yLabel: 'Decade',
+				interactive: false,
+				// font: 'Architects Daughter',
+				color: 'darkblue'
+			});
+		</script>
 	</body>
-	<script type="text/javascript">
-		 new roughViz.BarH({
-		    element: '#viz0', // container selection
-		    data: {
-			    labels: [<%= "'" + stats[:years].map {|e| e[0]+"0s"}.join("','") + "'" %>],
-		    	values: [<%= stats[:years].map {|e| e[1]}.join(',') %>]
-			},			
-			roughness: 5,
-			axisRoughness: 3,
-			fillStyle: 'cross-hatch',
-			xLabel: 'Count',
-			yLabel: 'Decade',
-			interactive: false,
-			// font: 'Architects Daughter',
-			color: 'darkblue'
-		});
-	</script>
 </html>
