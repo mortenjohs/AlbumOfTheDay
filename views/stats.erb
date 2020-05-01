@@ -34,15 +34,17 @@
 				<% proportion = current_day_in_decade.to_f/days_in_decade.to_f %>
 				<% stats[:years].each do |d,c| %>
 					<% if d<"202" %>
-				<tr>
-					<td><%= d %>0s</td>
-					<td style="text-align:right"><%= c %></td>
-					<td style="text-align:right"><%= ((c.to_f/total.to_f)*100).round %>%</td>
-				</tr>
+						<tr>
+							<td><%= d %>0s</td>
+							<td style="text-align:right"><%= c %></td>
+							<td style="text-align:right"><%= ((c.to_f/total.to_f)*100).round %>%</td>
+						</tr>
 					<% else %>
-					<td><%= d %>0s*</td>
-					<td style="text-align:right"><%= "#{c} (Adjusted: #{(c/proportion).round})" %></td>
-					<td style="text-align:right"><%= ((c.to_f/total.to_f)*100).round %>%</td>
+						<tr>
+							<td><%= d %>0s*</td>
+							<td style="text-align:right"><%= "#{c} (Adjusted: #{(c/proportion).round})" %></td>
+							<td style="text-align:right"><%= ((c.to_f/total.to_f)*100).round %>%</td>
+						</tr>
 					<% end %>
 				<% end %>
 				<tr>
