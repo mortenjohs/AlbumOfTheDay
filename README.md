@@ -51,8 +51,8 @@ You can also add elements to a file called 'config_override.yml' that will be me
 
 Example: 
 ```csv 
-date,album,artist,spotify-app,comment,bandcamp
-2020-03-31,"A Living Room Hush","Jaga Jazzist",spotify:album:79yZ6f40ABeqdqh1yqRgiS,"A modern classic from 2001! Bestest track: Airborne.",https://jagajazzist.bandcamp.com/album/a-living-room-hush
+date,album,artist,spotify-app,comment,year,bandcamp
+2020-03-31,"A Living Room Hush","Jaga Jazzist",spotify:album:79yZ6f40ABeqdqh1yqRgiS,"A modern classic from 2001! Bestest track: Airborne.",2001,https://jagajazzist.bandcamp.com/album/a-living-room-hush
 ```
 
 ## Ideas
