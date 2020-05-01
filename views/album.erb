@@ -1,56 +1,14 @@
 <html>
+<% rel_path = album['random'] ? './' : '../../' %>
 <head>
 	<title><%= "Album of the Day, #{album['date']}: #{album['artist']} - #{album['album']}" %></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="alternate" type="application/rss+xml" href="https://ervik.hopto.org/aotd/rss/spotify.xml" title="Album of the Day on Spotify">
-	<style type="text/css">
-		body {
-			font-family: sans-serif;
-			text-align: center;
-		}
-		a {
-			text-decoration: none;
-		}
-		h1 {
-			margin-bottom: -15px;
-		}
-		h2 {
-			margin-bottom: 5px;
-		}
-		.image {
-			display: block;
-			margin: auto;
-			width: 50%;
-		}
-		.comment {
-			width: 33%;
-			display: inline-block;
-		}
-		.providers {
-			margin: auto;
-			padding: 10px;
-			width: 25%;
-		}
-		hr { 
-		  display: block;
-		  margin-top: 0.5em;
-		  margin-bottom: 0.5em;
-		  margin-left: 33%;
-		  margin-right: 33%;
-		  border-style: inset;
-		  border-width: 1px;
-		} 
-		.disabled {
-			color: lightgray;
-		}
-		.miniscule {
-			font-size: 0.42em;
-		}
-
-	</style>
+    <!-- <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet'> -->
+	<link rel="stylesheet" type="text/css" href="<%= rel_path %>css/style.css">
 </head>
 <body>
-	<% rel_path = album['random'] ? './' : '../../' %>
+	
 	<% if album['random'] %>
 		<h1>Random Album of the Day</h1>
 	<% else %>

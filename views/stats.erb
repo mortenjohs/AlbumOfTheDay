@@ -3,47 +3,9 @@
 		<title>Stats</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	    <link rel="alternate" type="application/rss+xml" href="https://ervik.hopto.org/aotd/rss/spotify.xml" title="Album of the Day on Spotify">
-		<style type="text/css">
-			body {
-				font-family: sans-serif;
-				text-align: center;
-			}
-			a {
-				text-decoration: none;
-			}
-			h1 {
-				margin-bottom: -15px;
-			}
-			h2 {
-				margin-bottom: 5px;
-			}
-			.image {
-				display: block;
-				margin: auto;
-				width: 50%;
-			}
-			.providers {
-				margin: auto;
-				padding: 10px;
-				width: 25%;
-			}
-			hr { 
-			  display: block;
-			  margin-top: 0.5em;
-			  margin-bottom: 0.5em;
-			  margin-left: 33%;
-			  margin-right: 33%;
-			  border-style: inset;
-			  border-width: 1px;
-			} 
-			.disabled {
-				color: lightgray;
-			}
-			.miniscule {
-				font-size: 0.42em;
-			}
-
-		</style>
+	    <script src="https://unpkg.com/rough-viz@1.0.6"></script>
+   	    <!-- <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet'> -->
+   	    <link rel="stylesheet" type="text/css" href="./css/style.css">
 	</head>
 	<body>
 		<h1>Stats</h1>
@@ -55,7 +17,11 @@
 			<span class='miniscule'><a href=<%= "'#{rel_path}random.html'" %>>Random</a> | <a href=<%= "'#{rel_path}stats.html'" %>>Stats</a></span>
 		</div>
 		<br>
-		<center>
+		<div class = 'image'>
+			<div id="viz0"></div>
+		</div>
+		<br>
+		<div class="stats">
 			<table>
 				<tr>
 					<th>Decade</th>
@@ -70,22 +36,39 @@
 					<% if d<"202" %>
 				<tr>
 					<td><%= d %>0s</td>
-					<td><%= c %></td>
+					<td style="text-align:right"><%= c %></td>
 					<td style="text-align:right"><%= ((c.to_f/total.to_f)*100).round %>%</td>
 				</tr>
 					<% else %>
 					<td><%= d %>0s*</td>
-					<td><%= "#{c} (Adjusted: #{(c/proportion).round})" %></td>
+					<td style="text-align:right"><%= "#{c} (Adjusted: #{(c/proportion).round})" %></td>
 					<td style="text-align:right"><%= ((c.to_f/total.to_f)*100).round %>%</td>
 					<% end %>
 				<% end %>
 				<tr>
 					<td>Total:</td>
-					<td><%= total %></td>
+					<td style="text-align:right"><%= total %></td>
 					<td style="text-align:right">100%</td>
 				</tr>
 			</table>
-			<small><%= "*Only #{(proportion*100).round(2)}% of the decade has passed." %></small>
-		</center>
+		</div>
+		<small><%= "*Only #{(proportion*100).round(2)}% of the decade has passed." %></small>
 	</body>
+	<script type="text/javascript">
+		 new roughViz.BarH({
+		    element: '#viz0', // container selection
+		    data: {
+			    labels: [<%= "'" + stats[:years].map {|e| e[0]+"0s"}.join("','") + "'" %>],
+		    	values: [<%= stats[:years].map {|e| e[1]}.join(',') %>]
+			},			
+			roughness: 5,
+			axisRoughness: 3,
+			fillStyle: 'cross-hatch',
+			xLabel: 'Count',
+			yLabel: 'Decade',
+			interactive: false,
+			// font: 'Architects Daughter',
+			color: 'tan'
+		});
+	</script>
 </html>
