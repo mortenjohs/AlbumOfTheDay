@@ -47,6 +47,7 @@ You can also add elements to a file called 'config_override.yml' that will be me
     - artist (ie "Jaga Jazzist")
     - spotify-app (ie: spotify:album:79yZ6f40ABeqdqh1yqRgiS) 
     - comment (optional, ie "A modern classic from 2001! Bestest track: Airborne.")
+    - year (of publication)
     - bandcamp (optional, ie https://jagajazzist.bandcamp.com/album/a-living-room-hush)
 
 Example: 
