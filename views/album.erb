@@ -36,7 +36,7 @@
 		<h2><%= "#{album["artist"]} - #{album["album"]}" %> </h2>
 	</div>
 	<div class = 'comment'>
-		<%= "#{Markdown.new(album['comment']).to_html}" %>
+		<%= "#{Kramdown::Document.new(album['comment']).to_html}" %>
 	</div>
 	<hr>
 	<div class='providers'>

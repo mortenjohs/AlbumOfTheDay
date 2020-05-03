@@ -7,7 +7,7 @@ require "date"
 require "yaml"
 require "tilt"
 require "fileutils"
-require "markdown"
+require "kramdown"
 
 puts Time.now # for the log file...
 
