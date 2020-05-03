@@ -4,12 +4,15 @@ GEM
     rexml (3.2.4)
     rss (0.2.9)
       rexml
+    tilt (2.0.10)
 
 PLATFORMS
+  ruby
   x86-mingw32
 
 DEPENDENCIES
   rss
+  tilt
 
 BUNDLED WITH
-   1.16.0
+   2.1.4

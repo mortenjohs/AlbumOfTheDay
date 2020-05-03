@@ -23,13 +23,13 @@ FUTURE = config['generate_future'] || false
 [config['cache'], config['rss_dir'], config['html_dir']].each { |dirname| FileUtils.mkdir_p(dirname) unless File.directory?(dirname) }
 
 base_url = config["songlink_api"] + "?"
-config["url_parameters"].each { |k,v| base_url+="#{URI::encode(k)}=#{URI::encode(v)}&" } # leave trailing &!
+config["url_parameters"].each { |k,v| base_url+="#{URI.encode_www_form_component(k)}=#{URI.encode_www_form_component(v)}&" } # leave trailing &!
 
 all_albums = {}
 
 def get_bandcamp_album_cover(url) 
   # TODO add cache?
-  f = open(url).read
+  f = URI.open(url).read
   f=~/\"og:image\" content=\"(.*)">/
   $1
 end
@@ -56,7 +56,7 @@ def attach_providers_data(album, data)
 end
 
 def get_songlink_info(album, base_url, cache='./cache/')
-  spotify_id = album['spotify-app'].split(":")[-1]
+  # spotify_id = album['spotify-app'].split(":")[-1]
   # file_name = "#{cache}/#{album['date']}.json"
   file_name = "#{cache}/#{album['date']}.json"
   data = {}
@@ -68,7 +68,7 @@ def get_songlink_info(album, base_url, cache='./cache/')
   if data.empty?
     puts "Downloading: #{album['artist']} - #{album['album']}"
     url = base_url + "url=#{album['spotify-app']}"
-    open(url) do |f|
+    URI.open(url) do |f|
       data = JSON.parse(f.read)
       File.open(file_name, "w") {|file| file << JSON.pretty_generate(data) }      
     end
@@ -80,14 +80,12 @@ CSV.read(config["csv_file"], :headers => true).each do |row|
   album = row.to_h
   ## date
   album["date_obj"] = Date.strptime(album["date"])
-  date = {}
+  data = {}
   unless album['spotify-app'].nil?
     data = get_songlink_info(album, base_url, config['cache'])
   end
   all_albums[album["date"]] = attach_providers_data(album, data)
 end
-
-rss_generators = {}
 
 def rss_generator(provider, data, author, base_url)
   rss = RSS::Maker.make("atom") do |maker|
@@ -115,7 +113,7 @@ def get_album_by_provider_ref(ref, base_url = "https://api.song.link/v1-alpha.1/
   # override cache with cache = nil
   url = base_url + "url=#{ref}"
   data = {}
-  open(url) do |f|
+  URI.open(url) do |f|
     data = JSON.parse(f.read)      
   end
   data
@@ -124,9 +122,9 @@ end
 def get_songlink_album(artist, album)
   # use itunes to find an url -- first 
   url = "https://itunes.apple.com/search?entity=album&term="
-  url += URI::encode("\"#{artist}\"-\"#{album}\"")
+  url += URI.encode_www_form_component("\"#{artist}\"-\"#{album}\"")
   album = {}
-  open(url) do |f| 
+  URI.open(url) do |f| 
     data = JSON.parse(f.read) 
     if data['resultCount'] > 0
       itunes_url = data['results'].first['collectionViewUrl']
@@ -139,7 +137,7 @@ end
 def get_similar_artists_by_name_lastfm(artist,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
   url = "#{base_url}?method=artist.getsimilar&artist=#{artist}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
-  open(url) do |f|
+  URI.open(url) do |f|
     data = JSON.parse(f.read)
   end
   data['similarartists']['artist']
@@ -148,7 +146,7 @@ end
 def get_albums_from_artist_by_mbid_lastfm(mbid,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
   url = "#{base_url}?method=artist.getTopAlbums&mbid=#{mbid}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
-  open(url) { |f| data = JSON.parse(f.read) }
+  URI.open(url) { |f| data = JSON.parse(f.read) }
   data['topalbums']['album']
 end
 
@@ -197,7 +195,7 @@ end
 # https://gist.github.com/mortenjohs/4228838
 
 module Enumerable
-  def count_by (&block)
+  def count_by &block
     Hash[ self.group_by { |e| yield e }.map { |key, list| [key, list.length] } ]
   end
 end
