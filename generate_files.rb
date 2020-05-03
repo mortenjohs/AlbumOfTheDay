@@ -192,8 +192,8 @@ File.open("#{config['html_dir']}/index.html", "w") do |file|
 end
 
 ## Generate stats
-# https://gist.github.com/mortenjohs/4228838
 
+# https://gist.github.com/mortenjohs/4228838
 module Enumerable
   def count_by &block
     Hash[ self.group_by { |e| yield e }.map { |key, list| [key, list.length] } ]
