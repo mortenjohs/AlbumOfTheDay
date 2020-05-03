@@ -1,5 +1,4 @@
 source 'https://rubygems.org'
 gem 'rss'
 gem 'tilt'
-gem 'markdown'
-
+gem 'kramdown'
