@@ -99,7 +99,7 @@ def rss_generator(provider, data, author, base_url)
         unless album["providers"][provider].nil?
           maker.items.new_item do |item|
             item.link = album["providers"][provider]
-            item.title = "#{date}: #{album['artist']} -- #{album['album']}"
+            item.title = "#{album['date']}: #{album['artist']} -- #{album['album']}"
             item.updated = date
             item.description = "#{album['comment']}"
           end
@@ -108,6 +108,27 @@ def rss_generator(provider, data, author, base_url)
     end
   end
   rss
+end
+
+def csv_generator(provider, data)
+  headers = ['date', 'link', 'album','artist', 'year', 'description']
+  CSV.open('public/csv/'+provider+'.csv', "w", :headers => headers ) do |csv_file|
+    csv_file << headers
+    data.each do |date, album| 
+      row = {}
+      if Date.today >= album["date_obj"]
+        unless album["providers"][provider].nil?
+          row['date'] = album['date']
+          row['link'] = album["providers"][provider]
+          row['album'] = album['album']
+          row['artist'] = album['artist']
+          row['year'] = album['year']
+          row['description'] = "#{album['comment']}"
+          csv_file << row
+        end
+      end
+    end
+  end
 end
 
 def get_album_by_provider_ref(ref, base_url = "https://api.song.link/v1-alpha.1/links?", cache = './cache')
@@ -171,6 +192,10 @@ unless config["rss"].nil? || config["rss"]["author"].nil? || config['rss']['base
     end
   end
   puts "Providers' RSS feeds generated: #{providers.sort.join(', ')}"
+end
+
+providers.each do |p|
+  csv_generator(p, all_albums)
 end
 
 # Generate static htmls
