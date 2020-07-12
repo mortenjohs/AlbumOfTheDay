@@ -21,7 +21,7 @@ FUTURE = config['generate_future'] || false
 # puts config
 
 # make sure folders exist:
-[config['cache'], config['rss_dir'], config['html_dir']].each { |dirname| FileUtils.mkdir_p(dirname) unless File.directory?(dirname) }
+[config['cache'], config['rss_dir'], config['html_dir'], config['csv_dir']].each { |dirname| FileUtils.mkdir_p(dirname) unless File.directory?(dirname) }
 
 base_url = config["songlink_api"] + "?"
 config["url_parameters"].each { |k,v| base_url+="#{URI.encode_www_form_component(k)}=#{URI.encode_www_form_component(v)}&" } # leave trailing &!
@@ -110,9 +110,9 @@ def rss_generator(provider, data, author, base_url)
   rss
 end
 
-def csv_generator(provider, data)
+def csv_generator(provider, data, out_dir)
   headers = ['date', 'link', 'album','artist', 'year', 'description']
-  CSV.open('public/csv/'+provider+'.csv', "w", :headers => headers ) do |csv_file|
+  CSV.open(out_dir+provider+'.csv', "w", :headers => headers ) do |csv_file|
     csv_file << headers
     data.each do |date, album| 
       row = {}
@@ -194,8 +194,12 @@ unless config["rss"].nil? || config["rss"]["author"].nil? || config['rss']['base
   puts "Providers' RSS feeds generated: #{providers.sort.join(', ')}"
 end
 
-providers.each do |p|
-  csv_generator(p, all_albums)
+# Generate csv files
+unless config['csv_dir'].nil?
+  providers.each do |p|
+    csv_generator(p, all_albums, config['csv_dir'])
+  end
+  puts "Providers' CSV files generated: #{providers.sort.join(', ')}"
 end
 
 # Generate static htmls
