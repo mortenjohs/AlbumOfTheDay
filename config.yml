@@ -1,5 +1,6 @@
 cache: "./cache"
 rss_dir: "./public/rss"
+csv_dir: "./public/csv/"
 html_dir: "./public"
 csv_file: "./album_of_the_day.csv"
 songlink_api: "https://api.song.link/v1-alpha.1/links"
