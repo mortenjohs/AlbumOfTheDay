@@ -2,7 +2,7 @@
 <html>
 <% rel_path = album['random'] ? './' : '../../' %>
 <head>
-	<title><%= "Album of the Day, #{album['date']}: #{album['artist']} - #{album['album']}" %></title>
+	<title><%= "Album of the Day, #{album['date']}: #{album['artist']} - #{album['album']} (#{album['year']})" %></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="alternate" type="application/rss+xml" href="https://ervik.hopto.org/aotd/rss/spotify.xml" title="Album of the Day on Spotify">
     <!-- <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet'> -->
@@ -33,7 +33,7 @@
 		<%= "<a href='#{url}'><img src='#{album['thumbnail']}' alt='#{album['artist'] } - #{album['album']}' width='66%' ></a>" %> 
 	</div>
 	<div> 
-		<h2><%= "#{album["artist"]} - #{album["album"]}" %> </h2>
+		<h2><%= "#{album["artist"]} - #{album["album"]} (#{album['year']})" %></h2>
 	</div>
 	<div class = 'comment'>
 		<%= "#{Kramdown::Document.new(album['comment']).to_html}" %>
