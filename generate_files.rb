@@ -39,7 +39,7 @@ def attach_providers_data(album, data)
   album["providers"] = {}
 
   # special case for bandcamp
-  album["providers"]["bandcamp"] = album["bandcamp"] unless album["bandcamp"].nil?
+  album["providers"]["bandcamp"] = album["bandcamp"] unless album["bandcamp"].nil? || album["bandcamp"].strip.empty?
 
   unless data.nil? || data["entitiesByUniqueId"].nil?
     ## thumbnail
