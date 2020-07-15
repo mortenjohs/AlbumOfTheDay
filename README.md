@@ -58,13 +58,11 @@ date,album,artist,spotify-app,comment,year,bandcamp
 
 ## Ideas
 
-### Random album if there are none for a day
-
-1. Pull a random album from list
-2. Use a service to generate similar albums? (Spitify API?)
+- Tag by genre?
 
 ## TODO
 
 - Make cache id based istead of date based...
 - Make stats page show actual album names from the various decades on hover...
-- 
+- Pull album year from last.fm API if missing
+
