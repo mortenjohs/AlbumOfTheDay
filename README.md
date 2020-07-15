@@ -11,6 +11,7 @@
     - rss_dir: Output dir for RSS feeds
     - html_dir: Output dir for HTML files
     - csv_file: Input CSV file
+    - backup_csv_file: A CSV file for fallback albums -- will be populated by the random album generator
     - songlink_api: URL for the API
     - url_parameters: List of default parameters that is used for the API lookup (ie userCountry, key, etc.)
     - rss (optional (no RSS feeds are generted if these are missing...))
@@ -22,8 +23,10 @@ Example:
 ```YAML
 cache: "./cache"
 rss_dir: "./public/rss"
+csv_dir: "./public/csv/"
 html_dir: "./public"
 csv_file: "./album_of_the_day.csv"
+backup_csv_file: "./random_album_of_the_day.csv"
 songlink_api: "https://api.song.link/v1-alpha.1/links"
 url_parameters: 
   userCountry: "FR"
@@ -58,13 +61,11 @@ date,album,artist,spotify-app,comment,year,bandcamp
 
 ## Ideas
 
-### Random album if there are none for a day
-
-1. Pull a random album from list
-2. Use a service to generate similar albums? (Spitify API?)
+- Tag by genre?
 
 ## TODO
 
 - Make cache id based istead of date based...
 - Make stats page show actual album names from the various decades on hover...
-- 
+- Pull album year from last.fm API if missing
+
