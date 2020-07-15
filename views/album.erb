@@ -33,7 +33,11 @@
 		<%= "<a href='#{url}'><img src='#{album['thumbnail']}' alt='#{album['artist'] } - #{album['album']}' width='66%' ></a>" %> 
 	</div>
 	<div> 
-		<h2><%= "#{album["artist"]} - #{album["album"]} (#{album['year']})" %></h2>
+		<% if album['year'].nil? || album['year'].strip.empty? %>
+			<h2><%= "#{album["artist"]} - #{album["album"]}" %></h2>
+		<% else %>
+			<h2><%= "#{album["artist"]} - #{album["album"]} (#{album['year']})" %></h2>
+		<% end %>
 	</div>
 	<div class = 'comment'>
 		<%= "#{Kramdown::Document.new(album['comment']).to_html}" %>

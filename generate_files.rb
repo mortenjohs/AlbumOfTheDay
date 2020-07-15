@@ -88,6 +88,19 @@ CSV.read(config["csv_file"], :headers => true).each do |row|
   all_albums[album["date"]] = attach_providers_data(album, data)
 end
 
+CSV.read(config["backup_csv_file"], :headers => true).each do |row|
+  album = row.to_h
+  ## date
+  if all_albums[album["date"]].nil?
+    album["date_obj"] = Date.strptime(album["date"])
+    data = {}
+    unless album['spotify-app'].nil?
+      data = get_songlink_info(album, base_url, config['cache'])
+    end
+    all_albums[album["date"]] = attach_providers_data(album, data)
+  end
+end
+
 def rss_generator(provider, data, author, base_url)
   rss = RSS::Maker.make("atom") do |maker|
     maker.channel.author = author
@@ -157,7 +170,7 @@ def get_songlink_album(artist, album)
 end
 
 def get_similar_artists_by_name_lastfm(artist,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
-  url = "#{base_url}?method=artist.getsimilar&artist=#{artist}&api_key=#{api_key}&format=json&limit=#{limit}"
+  url = "#{base_url}?method=artist.getsimilar&artist=#{URI.escape(artist)}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
   open(url) do |f|
     data = JSON.parse(f.read)
@@ -179,10 +192,61 @@ def get_random_album_from_similar_artist(artist, api_key)
   get_songlink_album(artist['name'], album['name']) 
 end
 
+def append_csv(csv_filename, hashed_row)
+  CSV.open(csv_filename, 'a+', headers: true) do |csv|
+    row = []
+    headers = csv.read.headers
+    headers.each do |column|
+      row << hashed_row[column] || ''
+    end
+    csv << row
+  end
+end
+
+# Filter albums by date
+all_albums.select! { |date, album| (!album["date_obj"].nil?) && ((Date.today >= album["date_obj"]) || FUTURE )}
+all_albums = (all_albums.sort_by {|date, album| album["date_obj"] }).to_h
+
+
+if Date.today>all_albums.values.last['date_obj']
+  # We miss entries in csv -- let's autogenerate...
+  unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
+    artist = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map { |e| e['artist']}.sample
+    puts artist
+    data = {}
+    tries = 0
+    threshold = 9
+    while tries < threshold && data.empty?
+      begin
+        data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key']) 
+      rescue OpenURI::HTTPError => e
+        puts e
+      rescue NoMethodError => e
+        ## This captures null pointer errors in the random album generator chain...
+        puts e
+      end
+      tries += 1
+    end
+    unless data.empty?
+      album = {}
+      album['date_obj'] = all_albums.values.last['date_obj'].next
+      album['date']     = album['date_obj'].to_s
+      album['artist']   = data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]
+      album['album']    = data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]
+      album['year']     = '' ## placeholder!
+      album['bandcamp'] = ''
+      album['comment']  = "Random suggestion similar to: #{artist}."
+      album = attach_providers_data(album, data)
+      album['spotify-app'] = album['providers']['spotify'].nil? ? '' : 'spotify:album:'+album['providers']['spotify'].split('/').last
+      append_csv(config["backup_csv_file"], album)
+      all_albums[album['date']] = album
+    end
+  end
+end
+
 providers  = []
 all_albums.each {|date, album| providers<<album["providers"].keys;providers = providers.flatten.uniq }
-
-first_date = Date.strptime(all_albums.keys.sort.first)
+first_date = all_albums.values.first['date_obj']
 
 # If we have necessary info, generate RSS feeds...
 unless config["rss"].nil? || config["rss"]["author"].nil? || config['rss']['base_url'].nil?
@@ -232,6 +296,7 @@ end
 
 stats = {}
 stats[:years] = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map {|a| a["year"]}.count_by { |a| a.to_s[0,3] }.sort
+stats.delete("")
 puts stats 
 
 # Generate stats.html
@@ -271,4 +336,3 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
     end
   end
 end
-
