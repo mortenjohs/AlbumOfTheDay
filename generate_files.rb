@@ -215,10 +215,13 @@ if Date.today>all_albums.values.last['date_obj']
     puts artist
     data = {}
     tries = 0
-    threshold = 9
+    threshold = 15
     while tries < threshold && data.empty?
       begin
-        data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key']) 
+        data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key'])
+        if data["linksByPlatform"]['spotify'].nil?
+          data = {}
+        end
       rescue OpenURI::HTTPError => e
         puts e
       rescue NoMethodError => e
