@@ -192,10 +192,13 @@ def get_random_album_from_similar_artist(artist, api_key)
   get_songlink_album(artist['name'], album['name']) 
 end
 
-def append_csv(csv_filename, hashed_row)
+def append_csv(csv_filename, hashed_row, default_headers = ["date","album","artist","spotify-app","comment","year","bandcamp"])
   CSV.open(csv_filename, 'a+', headers: true) do |csv|
     row = []
     headers = csv.read.headers
+    if headers.empty?
+      headers = default_headers
+    end
     headers.each do |column|
       row << hashed_row[column] || ''
     end
@@ -206,7 +209,6 @@ end
 # Filter albums by date
 all_albums.select! { |date, album| (!album["date_obj"].nil?) && ((Date.today >= album["date_obj"]) || FUTURE )}
 all_albums = (all_albums.sort_by {|date, album| album["date_obj"] }).to_h
-
 
 if Date.today>all_albums.values.last['date_obj']
   # We miss entries in csv -- let's autogenerate...
