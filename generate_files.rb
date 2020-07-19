@@ -112,7 +112,11 @@ def rss_generator(provider, data, author, base_url)
         unless album["providers"][provider].nil?
           maker.items.new_item do |item|
             item.link = album["providers"][provider]
-            item.title = "#{album['date']}: #{album['artist']} -- #{album['album']} (#{album['year']})"
+            if album['year'].nil? || album['year'].empty?
+              item.title = "#{album['date']}: #{album['artist']} -- #{album['album']}"
+            else
+              item.title = "#{album['date']}: #{album['artist']} -- #{album['album']} (#{album['year']})"
+            end
             item.updated = date
             item.description = "#{album['comment']}"
           end
