@@ -305,7 +305,7 @@ end
 
 stats = {}
 stats[:years] = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map {|a| a["year"]}.count_by { |a| a.to_s[0,3] }.sort
-stats.delete("")
+stats[:years].reject! { |v| v[0]=="" }
 puts stats 
 
 # Generate stats.html
