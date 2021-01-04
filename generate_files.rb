@@ -77,6 +77,10 @@ def get_songlink_info(album, base_url, cache='./cache/')
   data
 end
 
+def date_to_filename(date)
+  "/#{date.year}/#{date.month}/#{date.day}.html"
+end
+
 CSV.read(config["csv_file"], :headers => true).each do |row|
   album = row.to_h
   ## date
@@ -85,7 +89,11 @@ CSV.read(config["csv_file"], :headers => true).each do |row|
   unless album['spotify-app'].nil?
     data = get_songlink_info(album, base_url, config['cache'])
   end
-  all_albums[album["date"]] = attach_providers_data(album, data)
+  album = attach_providers_data(album, data)
+  # special case for aotd
+  album['providers']['aotd'] = config['url'] + date_to_filename(album['date_obj'])
+
+  all_albums[album["date"]] = album
 end
 
 CSV.read(config["backup_csv_file"], :headers => true).each do |row|
@@ -98,7 +106,10 @@ CSV.read(config["backup_csv_file"], :headers => true).each do |row|
       data = get_songlink_info(album, base_url, config['cache'])
     end
     album['ai-generated'] = true
-    all_albums[album["date"]] = attach_providers_data(album, data)
+    album = attach_providers_data(album, data)
+    # special case for aotd
+    album['providers']['aotd'] = config['url'] + date_to_filename(album['date_obj'])
+    all_albums[album["date"]] = album
   end
 end
 
@@ -249,6 +260,8 @@ if Date.today>all_albums.values.last['date_obj']
       album['ai-generated'] = true
       album = attach_providers_data(album, data)
       album['spotify-app'] = album['providers']['spotify'].nil? ? '' : 'spotify:album:'+album['providers']['spotify'].split('/').last
+      # special case for aotd
+      album['providers']['aotd'] = config['url'] + date_to_filename(album['date_obj'])
       append_csv(config["backup_csv_file"], album)
       all_albums[album['date']] = album
     end
