@@ -26,7 +26,8 @@
 			<%= album["date_obj"] == Date.today ? "<span class = 'disabled'>Today</span>" : "<a href = '../../index.html' >Today</a>" %>
 		<% end %>
 		<%= next_day.nil? ? "<span class = 'disabled'>&rarr;</span>" : "<a href = '../../#{next_day.year}/#{next_day.month}/#{next_day.day}.html' > &rarr; </a> " %>
-		<br><span class='miniscule'><a href=<%= "'#{rel_path}random.html'" %>>Random</a> | <a href=<%= "'#{rel_path}stats.html'" %>>Stats</a></span>
+		<br>
+		<span class='miniscule'><a href=<%= "'#{rel_path}random.html'" %>>Random</a> | <a href=<%= "'#{rel_path}stats.html'" %>>Stats</a> | <a href=<%= "'#{rel_path}curated.html'" %>>Curated albums</a></span>
 	</div>
 	<div class = 'image'>
 		<% url = album['providers']['spotify'].nil? ? album['providers'].values.first : album['providers']['spotify'] %>

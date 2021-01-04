@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Curated</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <link rel="alternate" type="application/rss+xml" href="https://ervik.hopto.org/aotd/rss/spotify.xml" title="Album of the Day on Spotify">
+	    <script src="https://unpkg.com/rough-viz@1.0.6"></script>
+   	    <!-- <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet'> -->
+   	    <link rel="stylesheet" type="text/css" href="./css/style.css">
+	</head>
+	<body>
+		<h1>Curated</h1>
+		<% rel_path = './' %>
+		<h2><%= "#{['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][Date.today.wday]}, #{Date.today.to_s}" %></h2>
+		<div class = "navigation"> 
+			<a href = './index.html' >Today</a>
+			<br>
+			<span class='miniscule'><a href=<%= "'#{rel_path}random.html'" %>>Random</a> | <a href=<%= "'#{rel_path}stats.html'" %>>Stats</a> | <a href=<%= "'#{rel_path}curated.html'" %>>Curated albums</a></span>
+		</div>
+		<div class = 'image'>
+			<div id="viz0"></div>
+		</div>
+		<br>
+		<div class="curated">			
+			<% albums.each do |date, album| %>
+				<%= date %>:
+				<% date_obj = album["date_obj"] %>
+				<% url = "'#{rel_path}#{date_obj.year}/#{date_obj.month}/#{date_obj.day}.html'" %>
+				<% if album['year'].nil? || album['year'].strip.empty? %>
+					<a href = <%= url %> ><%= "#{album["artist"]} - #{album["album"]}" %></a><br>
+				<% else %>
+					<a href = <%= url %> ><%= "#{album["artist"]} - #{album["album"]} (#{album['year']})" %></a><br>
+				<% end %>
+			<% end %>
+		</div>
+	</body>
+</html>
