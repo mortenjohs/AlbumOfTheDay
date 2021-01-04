@@ -21,6 +21,7 @@
 Example:
 
 ```YAML
+url: "https://somewhere.org/aotd/"
 cache: "./cache"
 rss_dir: "./public/rss"
 csv_dir: "./public/csv/"
