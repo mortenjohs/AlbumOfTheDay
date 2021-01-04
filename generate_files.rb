@@ -97,6 +97,7 @@ CSV.read(config["backup_csv_file"], :headers => true).each do |row|
     unless album['spotify-app'].nil?
       data = get_songlink_info(album, base_url, config['cache'])
     end
+    album['ai-generated'] = true
     all_albums[album["date"]] = attach_providers_data(album, data)
   end
 end
@@ -245,6 +246,7 @@ if Date.today>all_albums.values.last['date_obj']
       album['year']     = '' ## placeholder!
       album['bandcamp'] = ''
       album['comment']  = "Random suggestion similar to: #{artist}."
+      album['ai-generated'] = true
       album = attach_providers_data(album, data)
       album['spotify-app'] = album['providers']['spotify'].nil? ? '' : 'spotify:album:'+album['providers']['spotify'].split('/').last
       append_csv(config["backup_csv_file"], album)
@@ -294,6 +296,8 @@ File.open("#{config['html_dir']}/index.html", "w") do |file|
   file << Tilt.new('views/index.erb').render(self, :today => Date.today)
 end
 
+
+
 ## Generate stats
 
 # https://gist.github.com/mortenjohs/4228838
@@ -311,6 +315,11 @@ puts stats
 # Generate stats.html
 File.open("#{config['html_dir']}/stats.html", "w") do |file|
   file << Tilt.new('views/stats.erb').render(self, :stats => stats)
+end
+
+## Generate curated list.
+File.open("#{config['html_dir']}/curated.html", "w") do |file|
+  file << Tilt.new('views/curated.erb').render(self, :albums => all_albums.select! { |date, album| !album["ai-generated"] })
 end
 
 ## Generate random page
