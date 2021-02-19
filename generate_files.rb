@@ -30,7 +30,7 @@ all_albums = {}
 
 def get_bandcamp_album_cover(url) 
   # TODO add cache?
-  f = open(url).read
+  f = open(url, 'User-Agent' => 'Nooby').read
   f=~/\"og:image\" content=\"(.*)">/
   $1
 end
@@ -69,7 +69,7 @@ def get_songlink_info(album, base_url, cache='./cache/')
   if data.empty?
     puts "Downloading: #{album['artist']} - #{album['album']}"
     url = base_url + "url=#{album['spotify-app']}"
-    open(url) do |f|
+    open(url, 'User-Agent' => 'Nooby') do |f|
       data = JSON.parse(f.read)
       File.open(file_name, "w") {|file| file << JSON.pretty_generate(data) }      
     end
@@ -164,7 +164,7 @@ def get_album_by_provider_ref(ref, base_url = "https://api.song.link/v1-alpha.1/
   # override cache with cache = nil
   url = base_url + "url=#{ref}"
   data = {}
-  open(url) do |f|
+  open(url, 'User-Agent' => 'Nooby') do |f|
     data = JSON.parse(f.read)      
   end
   data
@@ -175,7 +175,7 @@ def get_songlink_album(artist, album)
   url = "https://itunes.apple.com/search?entity=album&term="
   url += URI.encode_www_form_component("\"#{artist}\"-\"#{album}\"")
   album = {}
-  open(url) do |f| 
+  open(url, 'User-Agent' => 'Nooby') do |f| 
     data = JSON.parse(f.read) 
     if data['resultCount'] > 0
       itunes_url = data['results'].first['collectionViewUrl']
@@ -188,7 +188,7 @@ end
 def get_similar_artists_by_name_lastfm(artist,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
   url = "#{base_url}?method=artist.getsimilar&artist=#{URI.escape(artist)}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
-  open(url) do |f|
+  open(url, 'User-Agent' => 'Nooby') do |f|
     data = JSON.parse(f.read)
   end
   data['similarartists']['artist']
@@ -197,7 +197,7 @@ end
 def get_albums_from_artist_by_mbid_lastfm(mbid,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
   url = "#{base_url}?method=artist.getTopAlbums&mbid=#{mbid}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
-  open(url) { |f| data = JSON.parse(f.read) }
+  open(url, 'User-Agent' => 'Nooby') { |f| data = JSON.parse(f.read) }
   data['topalbums']['album']
 end
 
@@ -226,9 +226,13 @@ end
 all_albums.select! { |date, album| (!album["date_obj"].nil?) && ((Date.today >= album["date_obj"]) || FUTURE )}
 all_albums = (all_albums.sort_by {|date, album| album["date_obj"] }).to_h
 
-if Date.today>all_albums.values.last['date_obj']
+last_date = all_albums.values.last['date_obj']
+
+while Date.today>last_date
   # We miss entries in csv -- let's autogenerate...
-  unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
+  if config['lastfm'].nil? || config['lastfm']['api_key'].nil?
+    break
+  else
     artist = all_albums.select{|k,v| Date.today >= v["date_obj"]}.values.map { |e| e['artist']}.sample
     puts artist
     data = {}
@@ -241,6 +245,11 @@ if Date.today>all_albums.values.last['date_obj']
           data = {}
         end
       rescue OpenURI::HTTPError => e
+        ## Too many tries -- set last_date to today to break out of this while loop
+        if e.io.status[0] == 429
+          puts "We've reached a limit of the lastfm API..."
+        end
+        last_date = Date.today  
         puts e
       rescue NoMethodError => e
         ## This captures null pointer errors in the random album generator chain...
@@ -249,8 +258,9 @@ if Date.today>all_albums.values.last['date_obj']
       tries += 1
     end
     unless data.empty?
+      last_date = last_date.next
       album = {}
-      album['date_obj'] = all_albums.values.last['date_obj'].next
+      album['date_obj'] = last_date
       album['date']     = album['date_obj'].to_s
       album['artist']   = data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]
       album['album']    = data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]
@@ -345,7 +355,7 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
     begin
       data = get_random_album_from_similar_artist(artist, config['lastfm']['api_key']) 
     rescue OpenURI::HTTPError => e
-      puts e
+      puts e + " when generating the random page..."
     rescue NoMethodError => e
       ## This captures null pointer errors in the random album generator chain...
       puts e
