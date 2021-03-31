@@ -30,6 +30,7 @@ all_albums = {}
 
 def get_bandcamp_album_cover(url) 
   # TODO add cache?
+  puts url
   f = open(url, 'User-Agent' => 'Nooby').read
   f=~/\"og:image\" content=\"(.*)">/
   $1
@@ -51,7 +52,7 @@ def attach_providers_data(album, data)
   end
 
   # If we can't get the default thumbnail, use bandcamp, if possible.
-  album["thumbnail"] = get_bandcamp_album_cover(album["bandcamp"]) if !album["bandcamp"].nil? && album["thumbnail"].nil?
+  album["thumbnail"] = get_bandcamp_album_cover(album["bandcamp"]) if !album["bandcamp"].nil? && !album["bandcamp"].strip.empty? && album["thumbnail"].nil?
   
   return album
 end
