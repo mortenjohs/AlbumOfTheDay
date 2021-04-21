@@ -26,6 +26,8 @@ FUTURE = config['generate_future'] || false
 base_url = config["songlink_api"] + "?"
 config["url_parameters"].each { |k,v| base_url+="#{URI.encode_www_form_component(k)}=#{URI.encode_www_form_component(v)}&" } # leave trailing &!
 
+panelbear = config['panelbear_site'] || ''
+
 all_albums = {}
 
 def get_bandcamp_album_cover(url) 
@@ -310,7 +312,7 @@ all_albums.each do |date, album|
     dirname = File.dirname(filename)
     FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
     File.open(filename, "w") do |file|
-      file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers )
+      file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers, :panelbear => panelbear )
     end
   end
 end
@@ -338,12 +340,12 @@ puts stats
 
 # Generate stats.html
 File.open("#{config['html_dir']}/stats.html", "w") do |file|
-  file << Tilt.new('views/stats.erb').render(self, :stats => stats)
+  file << Tilt.new('views/stats.erb').render(self, :stats => stats, :panelbear => panelbear)
 end
 
 ## Generate curated list.
 File.open("#{config['html_dir']}/curated.html", "w") do |file|
-  file << Tilt.new('views/curated.erb').render(self, :albums => all_albums.select! { |date, album| !album["ai-generated"] })
+  file << Tilt.new('views/curated.erb').render(self, :albums => all_albums.select! { |date, album| !album["ai-generated"] }, :panelbear => panelbear)
 end
 
 ## Generate random page
@@ -373,7 +375,7 @@ unless config['lastfm'].nil? || config['lastfm']['api_key'].nil?
     album['comment']  = "Random suggestion similar to: #{artist}."
     album = attach_providers_data(album, data)
     File.open("#{config['html_dir']}/random.html", "w") do |file|
-      file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers )
+      file << album_template.render(self, :album => album, :first_date => first_date, :providers => providers, :panelbear => panelbear)
       puts "Random album: #{data["entitiesByUniqueId"][data["entityUniqueId"]]["artistName"]} - #{data["entitiesByUniqueId"][data["entityUniqueId"]]["title"]} (Based on #{artist}.)"
     end
   end

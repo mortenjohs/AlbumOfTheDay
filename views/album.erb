@@ -8,6 +8,14 @@
     <!-- <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet'> -->
 	<link rel="stylesheet" type="text/css" href="<%= rel_path %>css/style.css">
 	<meta property="og:image" content=<%= album['thumbnail']%> />
+	<% unless panelbear.empty? %>
+		<!-- Panelbear Analytics - We respect your privacy -->
+		<script async src=<%= "https://cdn.panelbear.com/analytics.js?site=#{panelbear}" %> ></script>
+		<script>
+		    window.panelbear = window.panelbear || function() { (window.panelbear.q = window.panelbear.q || []).push(arguments); };
+		    panelbear('config', { site: <%= "'#{panelbear}'" %> });
+		</script>
+	<% end %> 
 </head>
 <body>
 	

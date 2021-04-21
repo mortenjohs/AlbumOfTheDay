@@ -7,6 +7,14 @@
 	    <script src="https://unpkg.com/rough-viz@1.0.6"></script>
    	    <!-- <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet'> -->
    	    <link rel="stylesheet" type="text/css" href="./css/style.css">
+		<% unless panelbear.empty? %>
+			<!-- Panelbear Analytics - We respect your privacy -->
+			<script async src=<%= "https://cdn.panelbear.com/analytics.js?site=#{panelbear}" %> ></script>
+			<script>
+			    window.panelbear = window.panelbear || function() { (window.panelbear.q = window.panelbear.q || []).push(arguments); };
+			    panelbear('config', { site: <%= "'#{panelbear}'" %> });
+			</script>
+		<% end %> 
 	</head>
 	<body>
 		<h1>Curated</h1>
