@@ -37,6 +37,7 @@ rss:
 lastfm:
   api_key: "API_KEY"
   base_url: "http://ws.audioscrobbler.com/2.0/"
+panelbear_site: "SITE_KEY"
 ```
 
 You can also add elements to a file called 'config_override.yml' that will be merged into this config at runtime.
