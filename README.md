@@ -17,6 +17,10 @@
     - rss (optional (no RSS feeds are generted if these are missing...))
         - author: author of RSS feed.
         - base_url: URL for the resulting rss feed. Provider and .xml will be added.
+    - lastfm: (optional, for similar artists)
+        - api_key: "API_KEY"
+        - base_url: "http://ws.audioscrobbler.com/2.0/"
+    - panelbear_site: (optional, for usage tracking)
 
 Example:
 
