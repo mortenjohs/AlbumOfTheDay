@@ -1,25 +1,23 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.3.1)
+    activesupport (7.0.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
-    concurrent-ruby (1.1.8)
-    i18n (1.8.10)
+    concurrent-ruby (1.1.9)
+    i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     kramdown (2.3.1)
       rexml
-    minitest (5.14.4)
+    minitest (5.15.0)
     rexml (3.2.5)
     rss (0.2.9)
       rexml
     tilt (2.0.10)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
-    zeitwerk (2.4.2)
 
 PLATFORMS
   ruby
@@ -32,4 +30,4 @@ DEPENDENCIES
   tilt
 
 BUNDLED WITH
-   2.2.16
+   2.3.3
