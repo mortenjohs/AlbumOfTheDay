@@ -8,3 +8,4 @@ config_override.yml
 secrets.txt
 ideas.txt
 log-scheduled.txt
+out/
