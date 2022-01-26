@@ -10,8 +10,6 @@ RUN bundle install
 
 COPY . .
 
-RUN ["pwd"]
-
 RUN ["ruby", "./generate_files.rb"]
 
 FROM scratch AS export-stage
