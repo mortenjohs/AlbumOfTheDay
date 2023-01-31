@@ -1,22 +1,22 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.1)
+    activesupport (7.0.4.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    concurrent-ruby (1.1.9)
-    i18n (1.8.11)
+    concurrent-ruby (1.1.10)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     kramdown (2.3.1)
       rexml
-    minitest (5.15.0)
+    minitest (5.17.0)
     rexml (3.2.5)
     rss (0.2.9)
       rexml
     tilt (2.0.10)
-    tzinfo (2.0.4)
+    tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
 
 PLATFORMS
