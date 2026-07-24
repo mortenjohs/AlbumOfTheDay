@@ -33,7 +33,7 @@ all_albums = {}
 def get_bandcamp_album_cover(url) 
   # TODO add cache?
   puts url
-  f = open(url, 'User-Agent' => 'Nooby').read
+  f = URI.open(url, 'User-Agent' => 'Nooby').read
   f=~/\"og:image\" content=\"(.*)">/
   $1
 end
@@ -72,7 +72,7 @@ def get_songlink_info(album, base_url, cache='./cache/')
   if data.empty?
     puts "Downloading: #{album['artist']} - #{album['album']}"
     url = base_url + "url=#{album['spotify-app']}"
-    open(url, 'User-Agent' => 'Nooby') do |f|
+    URI.open(url, 'User-Agent' => 'Nooby') do |f|
       data = JSON.parse(f.read)
       File.open(file_name, "w") {|file| file << JSON.pretty_generate(data) }      
     end
@@ -167,7 +167,7 @@ def get_album_by_provider_ref(ref, base_url = "https://api.song.link/v1-alpha.1/
   # override cache with cache = nil
   url = base_url + "url=#{ref}"
   data = {}
-  open(url, 'User-Agent' => 'Nooby') do |f|
+  URI.open(url, 'User-Agent' => 'Nooby') do |f|
     data = JSON.parse(f.read)      
   end
   data
@@ -178,7 +178,7 @@ def get_songlink_album(artist, album)
   url = "https://itunes.apple.com/search?entity=album&term="
   url += URI.encode_www_form_component("\"#{artist}\"-\"#{album}\"")
   album = {}
-  open(url, 'User-Agent' => 'Nooby') do |f| 
+  URI.open(url, 'User-Agent' => 'Nooby') do |f| 
     data = JSON.parse(f.read) 
     if data['resultCount'] > 0
       itunes_url = data['results'].first['collectionViewUrl']
@@ -189,9 +189,9 @@ def get_songlink_album(artist, album)
 end
 
 def get_similar_artists_by_name_lastfm(artist,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
-  url = "#{base_url}?method=artist.getsimilar&artist=#{URI.escape(artist)}&api_key=#{api_key}&format=json&limit=#{limit}"
+  url = "#{base_url}?method=artist.getsimilar&artist=#{URI.encode_www_form_component(artist)}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
-  open(url, 'User-Agent' => 'Nooby') do |f|
+  URI.open(url, 'User-Agent' => 'Nooby') do |f|
     data = JSON.parse(f.read)
   end
   data['similarartists']['artist']
@@ -200,7 +200,7 @@ end
 def get_albums_from_artist_by_mbid_lastfm(mbid,api_key,limit=10,base_url="http://ws.audioscrobbler.com/2.0/")
   url = "#{base_url}?method=artist.getTopAlbums&mbid=#{mbid}&api_key=#{api_key}&format=json&limit=#{limit}"
   data = {}
-  open(url, 'User-Agent' => 'Nooby') { |f| data = JSON.parse(f.read) }
+  URI.open(url, 'User-Agent' => 'Nooby') { |f| data = JSON.parse(f.read) }
   data['topalbums']['album']
 end
 

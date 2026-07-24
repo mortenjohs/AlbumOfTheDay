@@ -17,6 +17,10 @@
     - rss (optional (no RSS feeds are generted if these are missing...))
         - author: author of RSS feed.
         - base_url: URL for the resulting rss feed. Provider and .xml will be added.
+    - lastfm: (optional, for similar artists)
+        - api_key: "API_KEY"
+        - base_url: "http://ws.audioscrobbler.com/2.0/"
+    - panelbear_site: (optional, for usage tracking)
 
 Example:
 
@@ -37,6 +41,7 @@ rss:
 lastfm:
   api_key: "API_KEY"
   base_url: "http://ws.audioscrobbler.com/2.0/"
+panelbear_site: "SITE_KEY"
 ```
 
 You can also add elements to a file called 'config_override.yml' that will be merged into this config at runtime.
@@ -60,6 +65,32 @@ date,album,artist,spotify-app,comment,year,bandcamp
 2020-03-31,"A Living Room Hush","Jaga Jazzist",spotify:album:79yZ6f40ABeqdqh1yqRgiS,"A modern classic from 2001! Bestest track: Airborne.",2001,https://jagajazzist.bandcamp.com/album/a-living-room-hush
 ```
 
+## Run
+
+### With Ruby
+
+#### Install
+
+```bash
+bundle install
+```
+
+#### Launch
+
+```bash
+ruby generate_files.rb
+```
+
+### With Docker
+
+No ruby installed? Run with Docker.
+
+```bash
+DOCKER_BUILDKIT=1 docker build --output out .
+```
+
+This will generate the files and export them to the specified folder ('out').
+
 ## Ideas
 
 - Tag by genre?
@@ -69,4 +100,3 @@ date,album,artist,spotify-app,comment,year,bandcamp
 - Make cache id based istead of date based...
 - Make stats page show actual album names from the various decades on hover...
 - Pull album year from last.fm API if missing
-
