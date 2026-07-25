@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Random Album of the Day</title>
+		<script type="text/javascript">
+			(function() {
+				var dates = <%= JSON.generate(active_urls) %>;
+				var randomDate = dates[Math.floor(Math.random() * dates.length)];
+				window.location.href = './' + randomDate;
+			})();
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

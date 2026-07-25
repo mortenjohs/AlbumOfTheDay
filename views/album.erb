@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
-<% rel_path = album['random'] ? './' : '../../' %>
+<% rel_path = '../' %>
 <head>
-	<title><%= "Album of the Day, #{album['date']}: #{album['artist']} - #{album['album']} (#{album['year']})" %></title>
+	<title><%= "Album of the Day, #{format_verbose_date(album['date'])}: #{album['artist']} - #{album['album']} (#{album['year']})" %></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="alternate" type="application/rss+xml" href="https://ervik.hopto.org/aotd/rss/spotify.xml" title="Album of the Day on Spotify">
-    <!-- <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet'> -->
 	<link rel="stylesheet" type="text/css" href="<%= rel_path %>css/style.css">
 	<meta property="og:image" content=<%= album['thumbnail']%> />
 	<% unless panelbear.empty? %>
@@ -19,22 +18,12 @@
 </head>
 <body>
 	
-	<% if album['random'] %>
-		<h1>Random Album of the Day</h1>
-	<% else %>
-		<h1>Album of the Day</h1>
-	<% end %>
-	<h2><%= "#{['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][album['date_obj'].wday]}, #{album['date']}" %></h2>
+	<h1>Album of the Day</h1>
+	<h2><%= format_verbose_date(album['date']) %></h2>
 	<div class = "navigation"> 
-		<% prev_day = album["date_obj"] - 1 unless album["date_obj"] == first_date || album['random'] %>
-		<% next_day = album["date_obj"] + 1 unless album["date_obj"] == Date.today || album['random'] %>
-		<%= prev_day.nil? ? "<span class = 'disabled'>&larr;</span>" : "<a href = '#{rel_path}#{prev_day.year}/#{prev_day.month}/#{prev_day.day}.html' > &larr; </a> " %> 
-		<% if album['random'] %>
-			<a href = "./index.html" >Today</a>
-		<% else %>
-			<%= album["date_obj"] == Date.today ? "<span class = 'disabled'>Today</span>" : "<a href = '../../index.html' >Today</a>" %>
-		<% end %>
-		<%= next_day.nil? ? "<span class = 'disabled'>&rarr;</span>" : "<a href = '../../#{next_day.year}/#{next_day.month}/#{next_day.day}.html' > &rarr; </a> " %>
+		<%= "<a href = '#{rel_path}#{album['prev_url']}' > &larr; </a>" %>
+		<a href = "../index.html" >Today</a>
+		<%= "<a href = '#{rel_path}#{album['next_url']}' > &rarr; </a>" %>
 		<br>
 		<span class='miniscule'><a href=<%= "'#{rel_path}random.html'" %>>Random</a> | <a href=<%= "'#{rel_path}stats.html'" %>>Stats</a> | <a href=<%= "'#{rel_path}curated.html'" %>>Curated albums</a></span>
 	</div>
@@ -43,14 +32,14 @@
 		<%= "<a href='#{url}'><img src='#{album['thumbnail']}' alt='#{album['artist'] } - #{album['album']}' width='66%' ></a>" %> 
 	</div>
 	<div> 
-		<% if album['year'].nil? || album['year'].strip.empty? %>
+		<% if album['year'].nil? || album['year'].to_s.strip.empty? %>
 			<h2><%= "#{album["artist"]} - #{album["album"]}" %></h2>
 		<% else %>
 			<h2><%= "#{album["artist"]} - #{album["album"]} (#{album['year']})" %></h2>
 		<% end %>
 	</div>
 	<div class = 'comment'>
-		<%= "#{Kramdown::Document.new(album['comment']).to_html}" %>
+		<%= "#{Kramdown::Document.new(album['comment'].to_s).to_html}" %>
 	</div>
 	<hr>
 	<div class='providers'>
@@ -67,3 +56,4 @@
 		<%= "RSS(ATOM): #{p_text.join(' | ')}"%>
 	</small>
 </body>
+</html>

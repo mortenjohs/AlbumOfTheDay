@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="UTF-8" />
+		<title>Album of the Day</title>
 		<script type="text/javascript">
-			<%= "window.location='./#{today.year}/#{today.month}/#{today.day}.html';" %>
+			(function() {
+				var now = new Date();
+				var month = String(now.getMonth() + 1).padStart(2, '0');
+				var day = String(now.getDate()).padStart(2, '0');
+				window.location.href = './' + month + '/' + day + '.html';
+			})();
 		</script>
 	</head>
+	<body>
+	</body>
 </html>
