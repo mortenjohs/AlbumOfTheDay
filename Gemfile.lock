@@ -15,8 +15,8 @@ GEM
     rexml (3.2.5)
     rss (0.2.9)
       rexml
-    tilt (2.0.10)
     tzinfo (2.0.6)
+    tilt (2.8.0)
       concurrent-ruby (~> 1.0)
 
 PLATFORMS
